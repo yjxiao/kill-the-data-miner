@@ -1,6 +1,7 @@
 import pandas as pd
 import graphlab as gl
 import os
+import sys
 
 
 def read_and_join(in_path=os.curdir):
@@ -35,12 +36,15 @@ def do_train(df):
     return job
 
 
-def main():
-    data = gl.SFrame(read_and_join)
+def main(args):
+    if len(args) > 0 and os.path.exists(str(args[0])):
+        data = gl.SFrame(read_and_join(str(args[0])))
+    else:
+        data = gl.SFrame(read_and_join())
     job = do_train(data)
     with open('best_params.log', 'wb') as f:
         f.write(str(job))
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
