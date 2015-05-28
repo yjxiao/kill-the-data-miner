@@ -24,9 +24,9 @@ def do_train(df):
                                                 random_seed=2345)
     params = {'user_id': ['username'], 'item_id': ['course_id'],
               'target': ['label'], 'binary_target': [True],
-              'num_factors': stats.uniform(4, 512),
-              'regularization': stats.expon(100000),
-              'linear_regularization': stats.expon(100000000)}
+              'num_factors': stats.randint(4, 512),
+              'regularization': stats.expon(scale=1.0/100000),
+              'linear_regularization': stats.expon(scale=1.0/100000000)}
     job = gl.toolkits.model_parameter_search \
                      .random_search.create((train, valid),
                                            gl.recommender.
