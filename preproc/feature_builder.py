@@ -1,3 +1,18 @@
+#######################################################
+#
+# Used to aggregate event counts for each day.
+#
+# Access event count is seperated according to object
+# category.
+#
+# Run python feature_builder.py to execute, assuming
+# input files reside in ../data directory. Output file
+# will be saved in the same dir.
+#
+# Output file will be named log_train_event_counts.csv
+#
+#######################################################
+
 from __future__ import division, print_function
 from copy import copy
 
