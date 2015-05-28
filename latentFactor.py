@@ -1,5 +1,6 @@
 import pandas as pd
 import graphlab as gl
+from scipy import stats
 import os
 import sys
 
@@ -23,14 +24,14 @@ def do_train(df):
                                                 random_seed=2345)
     params = {'user_id': ['username'], 'item_id': ['course_id'],
               'target': ['label'], 'binary_target': [True],
-              'num_factors': [2 ** i for i in range(3, 9)],
-              'regularization': [10 ** i for i in range(-11, -2)],
-              'linear_regularization': [10 ** i for i in range(-13, -4)]}
+              'num_factors': stats.uniform(4, 512),
+              'regularization': stats.expon(100000),
+              'linear_regularization': stats.expon(100000000)}
     job = gl.toolkits.model_parameter_search \
-                     .grid_search.create((train, valid),
-                                         gl.recommender.
-                                         factorization_recommender.create,
-                                         params)
+                     .random_search.create((train, valid),
+                                           gl.recommender.
+                                           factorization_recommender.create,
+                                           params)
     print job.get_results()
     print job.get_best_params()
     return job
