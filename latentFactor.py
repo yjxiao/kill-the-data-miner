@@ -1,6 +1,8 @@
 import pandas as pd
 import graphlab as gl
 from scipy import stats
+from sklearn.metrics import roc_auc_score
+import numpy as np
 import os
 import sys
 
@@ -17,15 +19,15 @@ def read_and_join(in_path=os.curdir):
 def do_train_rand(train, valid):
     params = {'user_id': ['username'], 'item_id': ['course_id'],
               'target': ['label'], 'binary_target': [True],
-              'num_factors': stats.randint(4, 512),
+              'num_factors': stats.randint(4, 128),
               'regularization': stats.expon(scale=1.0/100000),
-              'linear_regularization': stats.expon(scale=1.0/100000000)}
+              'linear_regularization': stats.expon(scale=1.0/10000000)}
     try:
         job = gl.toolkits.model_parameter_search \
                          .random_search.create((train, valid),
                                                gl.recommender.
                                                factorization_recommender.create,
-                                               params)
+                                               params, max_models=96)
         res = job.get_results()
         res = res.sort('validation_rmse')
         print res[0]
@@ -54,6 +56,25 @@ def do_train_grid(train, valid):
     except:
         print job.get_metrics()
     return job
+
+
+def do_train_single(train, valid):
+    params = {'user_id': 'username', 'item_id': 'course_id',
+              'target': 'label', 'binary_target': True,
+              'num_factors': 16,
+              'regularization': 0.0002,
+              'linear_regularization': 1e-6, 'max_iterations': 80}
+    try:
+        model = gl.recommender.factorization_recommender.create(train,
+                                                                **params)
+        model.save('model1')
+        print model.evaluate_rmse(valid, target='label')
+        y = np.array(valid['label'])
+        pred = np.array(model.predict(valid))
+        print 'auc = {}'.format(roc_auc_score(y, pred))
+    except:
+        pass
+    return model
 
 
 def main(args):
