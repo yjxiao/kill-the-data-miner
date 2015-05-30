@@ -122,7 +122,7 @@ def save_coefs_pred(model, data):
 
 
 def main(args):
-    # check args
+    # check args, args[0] should be a directory containing csv files for train
     if len(args) > 0 and os.path.exists(str(args[0])):
         data = read_and_join(str(args[0]))
     else:
