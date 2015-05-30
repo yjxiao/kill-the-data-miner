@@ -149,7 +149,9 @@ def main(args):
     res = do_train_grid(train, valid)
     if not res:
         raise ValueError('No results returned from grid search')
-    rand_params = res[0]
+    params_needed = ['user_id', 'item_id', 'target', 'binary_target',
+                     'num_factors', 'regularization', 'linear_regularization']
+    rand_params = {i: res[0][i] for i in params_needed}
     rand_params['num_factors'] = stats.randint(rand_params['num_factors'] / 2,
                                                rand_params['num_factors'] * 2)
     rand_params['regularization'] = stats \
@@ -167,9 +169,10 @@ def main(args):
                                                 item_test_proportion=0.2,
                                                 max_num_users=None,
                                                 random_seed=9876)
-    do_train_single(train, valid, params=res[0])
+    params = {i: res[0][i] for i in params_needed}
+    do_train_single(train, valid, params=params)
     # train final model and save coefs
-    params = res[0]
+    params = {i: res[0][i] for i in params_needed}
     params['max_iterations'] = 80
     model = do_train_single(gl.SFrame(data), params=params)
     save_coefs_pred(model, data)
