@@ -7,13 +7,24 @@ import os
 import sys
 
 
-def read_and_join(in_path=os.curdir):
-    """Read in csv files and join table by enrollment_id"""
+def read_and_join(in_path=os.curdir, side_info=None):
+    """Read in csv files and join tables by enrollment_id
+    Args:
+        in_path (str): path to the directory containing the csv files
+        side_info (str): file name of side information (eg. aggregated
+                         counts), assumed to be in the same directory.
+    Returns:
+        joined (DataFrame): joined table
+    """
     fn_enroll = os.path.join(in_path, 'enrollment_train.csv')
     fn_truth = os.path.join(in_path, 'truth_train.csv')
     enrollment = pd.read_csv(fn_enroll, header=0, index_col=0)
     truth = pd.read_csv(fn_truth, header=None, names=['label'], index_col=0)
     joined = enrollment.join(truth, how='inner')
+    if side_info and os.path.exists(os.path.join(in_path, side_info)):
+        fn_side = os.path.join(in_path, side_info)
+        side = pd.read_csv(fn_side, header=0, index_col=0)
+        joined = joined.join(side, how='inner')
     return joined
 
 
