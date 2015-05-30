@@ -77,6 +77,15 @@ def do_train_single(train, valid):
     return model
 
 
+def save_coefs_pred(model, data):
+    coefs = model.get('coefficients')
+    for k, v in coefs.items():
+        if k != 'intercept':
+            v.unpack('factors').save('{}_factors'.format(k), format='csv')
+    data.copy().add_column(model.predict(data), name='pred').save('pred.csv',
+                                                                  format='csv')
+
+
 def main(args):
     if len(args) > 0 and os.path.exists(str(args[0])):
         data = gl.SFrame(read_and_join(str(args[0])))
