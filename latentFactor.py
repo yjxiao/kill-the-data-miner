@@ -41,8 +41,8 @@ def do_train_rand(train, valid, params=None, max_models=32):
                                                params, max_models=max_models)
         res = job.get_results()
         res = res.sort('validation_rmse')
-        print 'Best params are: {}'.format(res[0])
-        res.save('train_history.csv', format='csv')
+        print 'Best params for random search are: {}'.format(res[0])
+        res.save('rand_search.csv', format='csv')
     except:
         print job.get_metrics()
         res = None
@@ -72,8 +72,8 @@ def do_train_grid(train, valid, params=None):
                                              params)
         res = job.get_results()
         res = res.sort('validation_rmse')
-        print 'Best params are: {}'.format(res[0])
-        res.save('train_history.csv', format='csv')
+        print 'Best params for grid search are: {}'.format(res[0])
+        res.save('grid_search.csv', format='csv')
     except:
         print job.get_metrics()
         res = None
@@ -99,7 +99,7 @@ def do_train_single(train, valid=None, params=None):
     try:
         model = gl.recommender.factorization_recommender.create(train,
                                                                 **params)
-        model.save('model1')
+        model.save('model')
         if valid:
             print model.evaluate_rmse(valid, target='label')
             y = np.array(valid['label'])
