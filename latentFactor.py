@@ -135,9 +135,9 @@ def save_coefs_pred(model, data):
 def main(args):
     # check args, args[0] should be a directory containing csv files for train
     if len(args) > 0 and os.path.exists(str(args[0])):
-        data = read_and_join(str(args[0]))
+        data = read_and_join(str(args[0]), side_info='aggregated_counts.csv')
     else:
-        data = read_and_join()
+        data = read_and_join(side_info='aggregated_counts.csv')
     train, valid = gl.recommender \
                      .util.random_split_by_user(gl.SFrame(data),
                                                 user_id='username',
